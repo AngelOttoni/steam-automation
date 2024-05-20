@@ -47,7 +47,7 @@
 2. **Load data into BigQuery**:
     
     ```bash
-    python scripts/load/load_to_bigquery.py
+    python scripts/load/bigquery_load.py
     
     ```
     
