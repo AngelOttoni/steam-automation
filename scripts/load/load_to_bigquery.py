@@ -10,33 +10,6 @@ def configure_gcp_credentials(credentials_path):
 def initialize_bigquery_client():
     return bigquery.Client()
 
-# Test credentials configuration and BigQuery client initialization
-# def test_bigquery_client():
-#     try:
-#         # Configure as credenciais (altere o caminho para o seu arquivo de credenciais)
-#         configure_gcp_credentials('credentials/bigquery-access-credentials.json')
-
-#         # Inicialize o cliente do BigQuery
-#         client = initialize_bigquery_client()
-
-#         # Execute uma operação simples para testar o cliente
-#         datasets = list(client.list_datasets())
-#         if datasets:
-#             print(f"Datasets encontrados: {[dataset.dataset_id for dataset in datasets]}")
-#         else:
-#             print("Nenhum dataset encontrado no projeto.")
-
-#         print("Configuração de credenciais e inicialização do cliente bem-sucedida!")
-#     except Exception as e:
-#         print(f"Erro ao inicializar o cliente do BigQuery: {e}")
-
-# if __name__ == "__main__":
-    test_bigquery_client()
-
-# Table columns
-# 'name', 'release_date', 'initial_price', 
-# 'discount_price', 'reviews', 'search_filter', 'timestamp'
-
 def create_dataset(client, dataset_id, location='southamerica-east1'):
     """
     Creates a dataset in BigQuery if it does not exist.
@@ -81,3 +54,48 @@ def load_data_to_table(client, dataset_id, table_id, file_path):
         job = client.load_table_from_file(source_file, table, job_config=job_config)
     job.result()  # Wait until the job is completed
     
+def main():
+    # Path to credentials file
+    credentials_path = 'credentials/bigquery-access-credentials.json'
+    
+    # Configure credentials
+    configure_gcp_credentials(credentials_path)
+    
+    # Initialize the BigQuery client
+    client = initialize_bigquery_client()
+    
+    # Dataset and table name
+    dataset_id = 'steam_dataset'
+    table_id = 'steam'
+    
+    # Create of the dataset
+    create_dataset(client, dataset_id)
+    
+    # Table columns
+    # 'name', 'release_date', 'initial_price', 
+    # 'discount_price', 'reviews', 'search_filter', 'timestamp'
+    
+    # Table schema
+    schema = [
+        bigquery.SchemaField('name', 'STRING'),
+        bigquery.SchemaField('release_date', 'STRING'),
+        bigquery.SchemaField('initial_price', 'FLOAT'),
+        bigquery.SchemaField('discount_price', 'FLOAT'),
+        bigquery.SchemaField('reviews', 'INTEGER'),
+        bigquery.SchemaField('search_filter', 'STRING'),
+        bigquery.SchemaField('timestamp', 'TIMESTAMP'),
+    ]
+    
+    # Create the table
+    create_table(client, dataset_id, table_id, schema)
+    
+    # Path to CSV file
+    file_path = 'data/raw/steam_data.csv'
+    
+    # Load data into table
+    load_data_to_table(client, dataset_id, table_id, file_path)
+    
+    print("Data loaded into BigQuery!")
+
+if __name__ == "__main__":
+    main()
