@@ -63,3 +63,21 @@ def create_table(client, dataset_id, table_id, schema):
     table = bigquery.Table(client.dataset(dataset_id).table(table_id), schema=schema)
     client.create_table(table, exists_ok=True) 
     
+def load_data_to_table(client, dataset_id, table_id, file_path):
+    """
+    Load data from a CSV file into a table in BigQuery.
+    
+    Args:
+        client (bigquery.Client): BigQuery client.
+        dataset_id (str): Dataset ID.
+        table_id (str): Table ID.
+        file_path (str): Path to CSV file.
+    """
+    table = client.dataset(dataset_id).table(table_id)
+    job_config = bigquery.LoadJobConfig(
+        source_format=bigquery.SourceFormat.CSV, skip_leading_rows=1, autodetect=True,
+    )
+    with open(file_path, 'rb') as source_file:
+        job = client.load_table_from_file(source_file, table, job_config=job_config)
+    job.result()  # Wait until the job is completed
+    
