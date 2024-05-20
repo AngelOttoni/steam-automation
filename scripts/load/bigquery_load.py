@@ -1,13 +1,23 @@
 from google.cloud import bigquery
 import os
 
-#TO-DO
-# Configure Google Cloud credentials
 def configure_gcp_credentials(credentials_path):
+    """
+    Configure yoy Google Cloud credentials
+
+    Args:
+        credentials_path (str): Path to the service account JSON file.
+    """
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_path
 
 # Initializing the BigQuery client
 def initialize_bigquery_client():
+    """
+    Initializes the BigQuery client.
+
+    Returns:
+        bigquery.Client: BigQuery client instance.
+    """
     return bigquery.Client()
 
 def create_dataset(client, dataset_id, location='southamerica-east1'):
@@ -48,7 +58,9 @@ def load_data_to_table(client, dataset_id, table_id, file_path):
     """
     table = client.dataset(dataset_id).table(table_id)
     job_config = bigquery.LoadJobConfig(
-        source_format=bigquery.SourceFormat.CSV, skip_leading_rows=1, autodetect=True,
+        source_format=bigquery.SourceFormat.CSV, 
+        skip_leading_rows=1, 
+        autodetect=False,
     )
     with open(file_path, 'rb') as source_file:
         job = client.load_table_from_file(source_file, table, job_config=job_config)
@@ -79,11 +91,11 @@ def main():
     schema = [
         bigquery.SchemaField('name', 'STRING'),
         bigquery.SchemaField('release_date', 'STRING'),
-        bigquery.SchemaField('initial_price', 'FLOAT'),
-        bigquery.SchemaField('discount_price', 'FLOAT'),
-        bigquery.SchemaField('reviews', 'INTEGER'),
+        bigquery.SchemaField('initial_price', 'STRING'),
+        bigquery.SchemaField('discount_price', 'STRING'),
+        bigquery.SchemaField('reviews', 'FLOAT'),
         bigquery.SchemaField('search_filter', 'STRING'),
-        bigquery.SchemaField('timestamp', 'TIMESTAMP'),
+        bigquery.SchemaField('timestamp', 'STRING'),
     ]
     
     # Create the table

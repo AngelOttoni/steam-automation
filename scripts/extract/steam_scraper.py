@@ -7,11 +7,17 @@ from datetime import datetime
 
 # Constants
 OUTPUT_DIR = 'data/raw'
-OUTPUT_FILE = 'steam_data.csv'
+OUTPUT_FILE = 'steam_data_test.csv'
 MAX_LINES = 100
 
-# Function to get the total number of pages
 def get_total_pages(url):
+    """Retrieve the total number of pages from the given URL.
+
+    Args:
+        url (str): The URL of the webpage to scrape.
+    Returns:
+        int: The total number of pages found on the website.
+    """
     response = requests.get(url)
     response.raise_for_status()
     doc = BeautifulSoup(response.content, 'html.parser')
@@ -22,8 +28,21 @@ def get_total_pages(url):
         total_pages = 1
     return total_pages
 
-# Function to extract information from games
+
 def extract_game_info(game):
+    """Extract game information from the given HTML game element.
+
+    Args:
+        game (bs4.element.Tag): The HTML element containing game information.
+
+    Returns:
+        tuple: A tuple containing the extracted game information in the following order:
+            - name (str): The name of the game.
+            - published_date (str): The release date of the game.
+            - original_price (str): The original price of the game.
+            - discount_price (str): The discounted price of the game.
+            - reviews_number (str): The number of user reviews for the game.
+    """
     name = game.find('span', {'class': 'title'}).text
     published_date = game.find('div', {'class': 'col search_released responsive_secondrow'}).text.strip()
 
@@ -55,8 +74,15 @@ def extract_game_info(game):
 
     return name, published_date, original_price, discount_price, reviews_number
 
-# Function to scrape the page
+
 def scrape_page(url, search_filter, writer):
+    """Scrape game information from the given URL and write to a CSV file.
+
+    Args:
+        url (str): The URL to scrape game information from.
+        search_filter (str): The search filter used for scraping.
+        writer (csv.writer): The CSV writer object to write the scraped data.
+    """
     total_pages = get_total_pages(url)
     line_count = 0
 
