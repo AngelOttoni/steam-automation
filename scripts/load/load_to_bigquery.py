@@ -49,3 +49,17 @@ def create_dataset(client, dataset_id, location='southamerica-east1'):
     dataset = bigquery.Dataset(client.dataset(dataset_id))
     dataset.location = location
     client.create_dataset(dataset, exists_ok=True)
+    
+def create_table(client, dataset_id, table_id, schema):
+    """
+    Creates a table in BigQuery if it does not exist.
+    
+    Args:
+        client (bigquery.Client): BigQuery client.
+        dataset_id (str): ID of the dataset where the table will be created.
+        table_id (str): ID of the table to be created.
+        schema (list): Table schema.
+    """
+    table = bigquery.Table(client.dataset(dataset_id).table(table_id), schema=schema)
+    client.create_table(table, exists_ok=True) 
+    
