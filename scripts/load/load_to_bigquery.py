@@ -10,8 +10,6 @@ def configure_gcp_credentials(credentials_path):
 def initialize_bigquery_client():
     return bigquery.Client()
 
-
-
 # Test credentials configuration and BigQuery client initialization
 # def test_bigquery_client():
 #     try:
@@ -33,4 +31,21 @@ def initialize_bigquery_client():
 #         print(f"Erro ao inicializar o cliente do BigQuery: {e}")
 
 # if __name__ == "__main__":
-#     test_bigquery_client()
+    test_bigquery_client()
+
+# Table columns
+# 'name', 'release_date', 'initial_price', 
+# 'discount_price', 'reviews', 'search_filter', 'timestamp'
+
+def create_dataset(client, dataset_id, location='southamerica-east1'):
+    """
+    Creates a dataset in BigQuery if it does not exist.
+    
+    Args:
+        client (bigquery.Client): BigQuery client.
+        dataset_id (str): ID of the dataset to be created.
+        location (str): Location of the dataset.
+    """
+    dataset = bigquery.Dataset(client.dataset(dataset_id))
+    dataset.location = location
+    client.create_dataset(dataset, exists_ok=True)

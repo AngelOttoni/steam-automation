@@ -93,7 +93,6 @@ def main(search_filters):
 
     print(f"Scraping completed. Data saved to '{output_path}'.")
 
-# Usage
 # Search filters for scraping
 SEARCH_FILTERS = ['topsellers', 'mostplayed', 'newreleases', 'upcoming']
 
